@@ -1,0 +1,25 @@
+.board {
+    background-color: black;
+    display: inline-block;
+}
+
+.row {
+    display: inline-block;
+}
+
+.cell {
+    width: 150px;
+    height: 150px;
+    margin: 5px;
+    background-color: white;
+    font-size: xx-large;
+}
+
+.grid-cell {
+    background-color: #eeff8d; /* Gray background for the 3x3 grid */
+}
+
+.grid-container {
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 5;
+}
