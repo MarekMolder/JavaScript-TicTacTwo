@@ -1,7 +1,9 @@
+import {UI} from "./ui.js";
+
 export class GameBrain {
     #board;
 
-    constructor() { 
+    constructor(gameMode, startAs) { 
     // private
     this.#board = [[], [], [], [], []];
 
@@ -11,9 +13,12 @@ export class GameBrain {
     this.currentPlayer = 'X';
     this.remainingPiecesX = 4;
     this.remainingPiecesO = 4;
+    
+    this.selectedAction = null;
 
-    this.gameType = 'PvP';
+    gameMode = 'PvP';
     this.gameState = 'Stopped'
+    startAs = 'X';
 
     this.playerX = 'Player';
     this.playerO = 'Player';
@@ -33,17 +38,20 @@ export class GameBrain {
 
     moveExistingPiece(oldX, oldY, newX, newY){
         if (this.#board[oldX][oldY] === this.currentPlayer && this.#board[newX][newY] === undefined){
-            this.#board[oldX][oldY] = null;
+            this.#board[oldX][oldY] = undefined;
             this.#board[newX][newY] = this.currentPlayer;
             this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
         }
     }
 
-    moveGrid(x, y) { 
-        if ((x >= 0 && x + 3 <= 5 && y >= 0 && y + 3 <= 5) && Math.abs(x - this.gridStartX) <= 1 && Math.abs(y - this.gridStartY) <= 1) {
+    moveGrid(x, y) {
+        if ((x >= 0 && x + 3 <= 5 && y >= 0 && y + 3 <= 5) &&
+            Math.abs(x - this.gridStartX) <= 1 && Math.abs(y - this.gridStartY) <= 1) {
+
             this.gridStartX = x;
             this.gridStartY = y;
         }
+
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
     }
 
@@ -55,11 +63,12 @@ export class GameBrain {
         this.remainingPiecesX = 4;
         this.remainingPiecesO = 4;
         this.gameState = 'Stopped'
+        this.selectedAction = null;
     }
     
 
     checkWin() {
-        return this.CheckAllLines(this.#board, 3, 3);
+        return this.checkAllLines(this.#board, 3, 3);
     }
 
     checkDraw() {
@@ -75,12 +84,12 @@ export class GameBrain {
 
     checkAllLines(board, width, height) {
         for (let i = 0; i < width; i++) {
-            if (this.CheckLine(board, this.gridStartX + i, this.gridStartY, 1, 0, height)) return board[this.gridStartX + i][this.gridStartY];
-            if (this.CheckLine(board, this.gridStartX, this.gridStartY + i, 0, 1, width)) return board[this.gridStartX][this.gridStartY + i];
+            if (this.checkLine(board, this.gridStartX + i, this.gridStartY, 1, 0, height)) return board[this.gridStartX + i][this.gridStartY];
+            if (this.checkLine(board, this.gridStartX, this.gridStartY + i, 0, 1, width)) return board[this.gridStartX][this.gridStartY + i];
         }
 
-        if (this.CheckLine(board, this.gridStartX, this.gridStartY, 1, 1, width)) return board[this.gridStartX][this.gridStartY];
-        if (this.CheckLine(board, this.gridStartX + width - 1, this.gridStartY, -1, 1, width)) return board[this.gridStartX + width - 1][this.gridStartY];
+        if (this.checkLine(board, this.gridStartX, this.gridStartY, 1, 1, width)) return board[this.gridStartX][this.gridStartY];
+        if (this.checkLine(board, this.gridStartX + width - 1, this.gridStartY, -1, 1, width)) return board[this.gridStartX + width - 1][this.gridStartY];
 
         return null;
     }
