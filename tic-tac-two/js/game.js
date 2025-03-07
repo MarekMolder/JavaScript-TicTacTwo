@@ -3,7 +3,7 @@ import {UI} from "./ui.js";
 export class GameBrain {
     #board;
 
-    constructor(gameMode, startAs) { 
+    constructor(gameMode = 'human-vs-human', startAs = 'X') { 
     // private
     this.#board = [[], [], [], [], []];
 
@@ -11,14 +11,16 @@ export class GameBrain {
     this.gridStartY = 1;
     
     this.currentPlayer = 'X';
+    this.opponentPlayer = 'O';
+    
     this.remainingPiecesX = 4;
     this.remainingPiecesO = 4;
     
     this.selectedAction = null;
 
-    gameMode = 'PvP';
+    this.gameMode = gameMode;
     this.gameState = 'Stopped'
-    startAs = 'X';
+    this.startAs = startAs;
 
     this.playerX = 'Player';
     this.playerO = 'Player';
@@ -33,6 +35,7 @@ export class GameBrain {
                 this.remainingPiecesO--;
             }
             this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+            this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
         }
     }
 
@@ -41,6 +44,7 @@ export class GameBrain {
             this.#board[oldX][oldY] = undefined;
             this.#board[newX][newY] = this.currentPlayer;
             this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+            this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
         }
     }
 
@@ -53,6 +57,7 @@ export class GameBrain {
         }
 
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+        this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
     }
 
     resetGame() {
