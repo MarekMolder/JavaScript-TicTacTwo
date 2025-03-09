@@ -4,108 +4,67 @@ import { Timer } from './timer.js';
 import { Ai } from './ai.js';
 
 
-let h1 = document.createElement('h1');
-h1.innerHTML = 'TIC TAC TWO';
-document.body.appendChild(h1);
-
-
-// Loome UI objekti
 let ui = new UI();
 let ai = new Ai();
-
-// Loome mängu, ajastaja ja mängija algseadistused
 let game, timer, startAs, gameMode;
 
-// Kui UI on valmis, kuvame menüü
 ui.createMenu(handleGameModeSelection, handleMarkerSelection);
 
-// Funktsioon mängurežiimi valikuks
 function handleGameModeSelection(mode) {
-    console.log('Selected mode:', mode);
     gameMode = mode;
     ui.showMarkerSelection(handleMarkerSelection);
 }
 
-// Funktsioon mängija märgi valikuks
 function handleMarkerSelection(marker) {
-    console.log('Selected marker:', marker);
     startAs = marker;
     startGame();
 }
 
-// Funktsioon mängu alustamiseks
 function startGame() {
     ui.hideMenu();
-    game = new GameBrain(gameMode, startAs);
-    
-    if (game.gameMode === 'ai-vs-human' && game.startAs === 'X') {
-        game.playerO = 'AI';
-    } else if (game.gameMode === 'ai-vs-human' && game.startAs === 'O') {
-        game.playerX = 'AI';
-    } else if (game.gameMode === 'ai-vs-ai') {
-        game.playerX = 'AI';
-        game.playerO = 'AI';
-    }
     
     timer = new Timer();
-    ui.generateGame(handleMove, h1, game, timer, handleDragStart, handleDrop, handleDragOver);  // Kuvame mänguväljundi
+    game = new GameBrain(gameMode, startAs);
+    
+    assignPlayers(game);
+    
+    ui.generateGame(handleMove, game, timer, handleDragStart, handleDrop, handleDragOver);
 }
-
-
 
 function handleMove(x, y, e) {
     
     if (game.gameState === 'Stopped') {
         return;
     }
-    
-    console.log(game.playerO);
-    console.log(game.playerX);
-    
-    if ((game.currentPlayer === 'O' && game.playerO === 'Player') || (game.currentPlayer === 'X' && game.playerX === 'Player')) {
-        console.log('true')
-        if ((game.currentPlayer === 'O' && game.remainingPiecesO !== 0) || (game.currentPlayer === 'X' && game.remainingPiecesX !== 0)) {
-            if (game.selectedAction === 'placeNew') {
-                game.makeAMove(x, y);
-                drawBoard();
-            }
-        }
 
-        if (game.selectedAction === 'moveGrid') {
+    const isPlayerTurn = game.currentPlayer === 'O' && game.playerO === 'Player' ||
+        game.currentPlayer === 'X' && game.playerX === 'Player';
+    
+    if (isPlayerTurn) {
+        
+        if (game.selectedAction === 'placeNew' && ((game.currentPlayer === 'O' && game.remainingPiecesO !== 0) || (game.currentPlayer === 'X' && game.remainingPiecesX !== 0))) {
+            game.makeAMove(x, y);
+        } else if (game.selectedAction === 'moveGrid') {
             game.moveGrid(x, y);
-            drawBoard();
         }
+        
     } else if ((game.currentPlayer === 'O' && game.playerO === 'AI') || (game.currentPlayer === 'X' && game.playerX === 'AI')) {
         handleAI(game);
-        drawBoard();
     }
-    
-   
-    
+
+    ui.drawBoard(handleMove, game, handleDragStart, handleDragOver, handleDrop);
     e.target.innerHTML = game.board[x][y] || "&nbsp;";
-    
-    if (game.checkDraw()) {
-        game.gameState = 'Stopped';
-        callOutDraw();
-    } else if (game.checkWin() === 'X') {
-        callOutWinner();
-    } else if (game.checkWin() === 'O') {
-        callOutWinner();
-    }
-
-
+    callOutDrawWin(game);
 }
 
-// Drag-and-drop sündmused ja loogika
 function handleDragStart(event, x, y) {
-    // Salvesta alguspunkt (x, y) drag-and-drop jaoks
     game.dragStartX = x;
     game.dragStartY = y;
-    event.dataTransfer.setData('text', `${x},${y}`); // Säilita algkoordinaadid
+    event.dataTransfer.setData('text', `${x},${y}`);
 }
 
 function handleDragOver(event) {
-    event.preventDefault(); // Vältige vaikimisi käitumist (vaja, et drop toimuks)
+    event.preventDefault();
 }
 
 function handleDrop(event, x, y) {
@@ -120,38 +79,42 @@ function handleDrop(event, x, y) {
             const startCoordinates = event.dataTransfer.getData('text').split(',');
             const startX = parseInt(startCoordinates[0], 10);
             const startY = parseInt(startCoordinates[1], 10);
-
-            // Kui liigutatakse olemasolev tükk, siis liiguta see vastavalt alguspunktist sihtpunkti
+            
             game.moveExistingPiece(startX, startY, x, y);
-            drawBoard(); // Uuenda lauda
+            ui.drawBoard(handleMove, game, handleDragStart, handleDragOver, handleDrop);
 
-            if (game.checkDraw()) {
-                game.gameState = 'Stopped';
-                callOutDraw();
-            } else if (game.checkWin() === 'X') {
-                callOutWinner();
-            } else if (game.checkWin() === 'O') {
-                callOutWinner();
-            }
+            callOutDrawWin(game);
         }
     }
-    
-    
-
 }
 
-function drawBoard() {
-    let infoPanel = document.querySelector('.player-info-panel');
-    infoPanel.remove();
-
-    infoPanel = ui.createPlayerInfoPanel(game);
-    ui.gameDiv.appendChild(infoPanel);
+function handleAI(game) {
+    if (game.playerX === 'AI' && game.currentPlayer === 'X' && game.remainingPiecesX === 0 || game.playerO === 'AI' && game.currentPlayer === 'O' && game.remainingPiecesO === 0) {
+        game.currentPlayer = game.currentPlayer === 'X' ? 'O' : 'X';
+        game.opponentPlayer = game.opponentPlayer === 'X' ? 'O' : 'X';
+        return;
+    }
     
-    let board = document.querySelector('.board');
-    board.remove();
+    if ((game.playerX === 'AI' && game.currentPlayer === 'X' && game.remainingPiecesX !== 0 ) || (game.playerO === 'AI' && game.currentPlayer === 'O' && game.remainingPiecesO !== 0)) {
+        ai.AiMove(game)
+    }
+}
 
-    board = ui.getInitialBoard(handleMove, game.gridStartX, game.gridStartY, handleDragStart, handleDragOver, handleDrop, game);
-    ui.gameDiv.appendChild(board);
+function assignPlayers(game) {
+    if (gameMode === 'ai-vs-human') {
+        game.startAs === 'X' ? game.playerO = 'AI' : game.playerX = 'AI';
+    } else if (gameMode === 'ai-vs-ai') {
+        game.playerX = game.playerO = 'AI';
+    }
+}
+
+function callOutDrawWin(game) {
+    if (game.checkDraw()) {
+        game.gameState = 'Stopped';
+        callOutDraw();
+    } else if (game.checkWin() === 'X' || game.checkWin() === 'O') {
+        callOutWinner();
+    }
 }
 
 function callOutWinner() {
@@ -161,7 +124,7 @@ function callOutWinner() {
         winnerElement.classList.add('winner');
         winnerElement.innerHTML = `Player ${winner} wins!`;
         ui.gameDiv.appendChild(winnerElement);
-        
+
         timer.toggleTimer(game);
 
         let timerButton = document.querySelector('.timer-button');
@@ -178,19 +141,5 @@ function callOutDraw() {
         ui.gameDiv.appendChild(drawElement);
 
         timer.stopTimer(game);
-
-
-    }
-}
-
-function handleAI(game) {
-    if (game.playerX === 'AI' && game.currentPlayer === 'X' && game.remainingPiecesX === 0 || game.playerO === 'AI' && game.currentPlayer === 'O' && game.remainingPiecesO === 0) {
-        game.currentPlayer = game.currentPlayer === 'X' ? 'O' : 'X';
-        game.opponentPlayer = game.opponentPlayer === 'X' ? 'O' : 'X';
-        return;
-    }
-    
-    if ((game.playerX === 'AI' && game.currentPlayer === 'X' && game.remainingPiecesX !== 0 ) || (game.playerO === 'AI' && game.currentPlayer === 'O' && game.remainingPiecesO !== 0)) {
-        ai.AiMove(game)
     }
 }
