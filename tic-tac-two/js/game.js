@@ -25,7 +25,7 @@ export class GameBrain {
     this.playerO = 'Player';
     }
     
-    makeAMove(x,y){        
+    makeAMove(x,y){
         if (this.#board[x][y] === undefined) {
             this.#board[x][y] = this.currentPlayer;
             this.currentPlayer === 'X' ? this.remainingPiecesX-- : this.remainingPiecesO--;
