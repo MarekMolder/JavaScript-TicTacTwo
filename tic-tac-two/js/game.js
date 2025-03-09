@@ -1,9 +1,8 @@
-import {UI} from "./ui.js";
-
 export class GameBrain {
     #board;
 
     constructor(gameMode = 'human-vs-human', startAs = 'X') { 
+        
     // private
     this.#board = [[], [], [], [], []];
 
@@ -25,17 +24,12 @@ export class GameBrain {
     this.playerX = 'Player';
     this.playerO = 'Player';
     }
-
+    
     makeAMove(x,y){        
         if (this.#board[x][y] === undefined) {
             this.#board[x][y] = this.currentPlayer;
-            if (this.currentPlayer === 'X') {
-                this.remainingPiecesX--;
-            } else {
-                this.remainingPiecesO--;
-            }
-            this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-            this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
+            this.currentPlayer === 'X' ? this.remainingPiecesX-- : this.remainingPiecesO--;
+            this.switchPlayer();
         }
     }
 
@@ -43,19 +37,22 @@ export class GameBrain {
         if (this.#board[oldX][oldY] === this.currentPlayer && this.#board[newX][newY] === undefined){
             this.#board[oldX][oldY] = undefined;
             this.#board[newX][newY] = this.currentPlayer;
-            this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-            this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
+            this.switchPlayer();
         }
     }
 
     moveGrid(x, y) {
-        if ((x >= 0 && x + 3 <= 5 && y >= 0 && y + 3 <= 5) &&
-            Math.abs(x - this.gridStartX) <= 1 && Math.abs(y - this.gridStartY) <= 1) {
-
+        const withinBounds = x >= 0 && x + 3 <= 5 && y >= 0 && y + 3 <= 5;
+        const validMove = Math.abs(x - this.gridStartX) <= 1 && Math.abs(y - this.gridStartY) <= 1;
+        
+        if (withinBounds && validMove) {
             this.gridStartX = x;
             this.gridStartY = y;
+            this.switchPlayer();
         }
+    }
 
+    switchPlayer() {
         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
         this.opponentPlayer = this.opponentPlayer === 'X' ? 'O' : 'X';
     }
@@ -71,7 +68,6 @@ export class GameBrain {
         this.selectedAction = null;
     }
     
-
     checkWin() {
         return this.checkAllLines(this.#board, 3, 3);
     }
@@ -112,6 +108,4 @@ export class GameBrain {
     get board() {
         return this.#board;
     }
-
-    
 }
