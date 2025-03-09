@@ -1,50 +1,40 @@
 export class Ai {
     
     AiMove(game) {
-        let winningMove = this.findWinningMove(game);
+        let blockingMove = this.findBlockingMove(game);
 
-        if (winningMove !== null) {
-            console.log(winningMove);
-            game.makeAMove(winningMove.value.x, winningMove.value.y);
+        if (blockingMove) {
+            game.makeAMove(blockingMove.value.x, blockingMove.value.y);
             return
         }
         
-        let blockingMove = this.findBlockingMove(game);
-        
-        if (blockingMove !== null) {
-            game.makeAMove(blockingMove.value.x, blockingMove.value.y);
+        let winningMove = this.findWinningMove(game);
+
+        if (winningMove) {
+            game.makeAMove(winningMove.value.x, winningMove.value.y);
             return
         }
         
         this.getRandomMoveWithinGrid(game);
     }
     
+    findWinningMove(game) {
+        return this.findBestMove(game, game.currentPlayer);
+    }
+    
     findBlockingMove(game) {
-        for (let x = game.gridStartX; x < game.gridStartX + 3; x++) {
-            for (let y = game.gridStartY; y < game.gridStartY + 3; y++) {
-                if (game.board[x][y] === undefined) {
-                    game.board[x][y] = game.opponentPlayer;
-                    
-                    if (game.checkWin() === game.opponentPlayer) {
-                        game.board[x][y] = undefined;
-                        return {value: {x, y}};
-                    }
-                    
-                    game.board[x][y] = undefined;
-                }
-            }
-        }
-        return null;
+        return this.findBestMove(game, game.opponentPlayer);
     }
 
-    findWinningMove(game) {
+    findBestMove(game, player) {
         for (let x = game.gridStartX; x < game.gridStartX + 3; x++) {
             for (let y = game.gridStartY; y < game.gridStartY + 3; y++) {
                 if (game.board[x][y] === undefined) {
-                    game.board[x][y] = game.currentPlayer;
+                    game.board[x][y] = player;
 
-                    if (game.checkWin() === game.currentPlayer) {
+                    if (game.checkWin() === player) {
                         game.board[x][y] = undefined;
+                        console.log(x,y)
                         return {value: {x, y}};
                     }
 
@@ -73,6 +63,5 @@ export class Ai {
                 }
             }
         }
-        
     }
 }
