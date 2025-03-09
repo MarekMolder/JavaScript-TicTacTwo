@@ -73,7 +73,6 @@ export class UI {
     
     generateGame(handleMove, game, timer, handleDragStart, handleDragOver, handleDrop) {
         this.clearGame();
-        this.gameDiv.style.display = 'block';
 
         this.gameDiv.append(
             timer.createTimer(game),

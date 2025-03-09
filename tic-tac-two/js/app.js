@@ -136,7 +136,7 @@ function callOutDraw() {
     let draw = game.checkDraw();
     if (draw) {
         let drawElement = document.createElement('div');
-        drawElement.classList.add('draw');
+        drawElement.classList.add('winner');
         drawElement.innerHTML = `Its a draw!`;
         ui.gameDiv.appendChild(drawElement);
 

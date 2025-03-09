@@ -58,7 +58,7 @@ body {
     grid-column: 2 / span 1; /* Keskele ülemisse ossa */
     grid-row: 1 / span 1;
     background: rgb(195, 238, 253);
-    padding: 10px 300px;
+    padding: 10px 150px;
     border-radius: 15px;
     margin-bottom: 20px;
 }
@@ -117,7 +117,7 @@ body {
 }
 
 .player-info-panel {
-    grid-column: 3 / span 1;
+    grid-column: 1 / span 1;
     grid-row: 2 / span 1;
     background: rgb(195, 238, 253);
     padding: 20px;
@@ -157,7 +157,32 @@ body {
     transform: scale(1.05);
 }
 
+.winner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
 
+/* Lisame väikese fade-in efekti */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
 
 
 
