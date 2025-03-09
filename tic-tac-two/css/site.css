@@ -24,6 +24,7 @@
     grid-row: 1 / span 5;
 }
 
+
 .status-table {
     width: 100%;
     border-collapse: collapse;
@@ -39,3 +40,44 @@
 .status-table th {
     background-color: #f2f2f2;
 }
+
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #00bcd4, #26a69a);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.menu-heading {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.menu-button {
+    background: white;
+    color: #055fbd;
+    border: none;
+    padding: 12px 24px;
+    margin: 10px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.menu-button:hover {
+    background: #055fbd;
+    color: white;
+    transform: scale(1.05);
+}
+
+.game-container {
+    display: none;
+}
+
+
+

@@ -4,11 +4,11 @@ import { Timer } from './timer.js';
 export class UI {
     constructor() {
         this.menuDiv = document.createElement('div');
-        this.menuDiv.classList.add('menu');
+        this.menuDiv.classList.add('menu-container');
         
         
         this.gameDiv = document.createElement('div');
-        this.gameDiv.classList.add('game');
+        this.gameDiv.classList.add('game-container');
         
         document.body.appendChild(this.menuDiv);
         document.body.appendChild(this.gameDiv);
@@ -20,21 +20,25 @@ export class UI {
         // Loome mängurežiimi valiku
         let gameModeHeading = document.createElement('h2');
         gameModeHeading.innerText = 'Select Game Mode';
+        gameModeHeading.classList.add('menu-heading');
         this.menuDiv.appendChild(gameModeHeading);
 
         let humanVsHumanBtn = document.createElement('button');
         humanVsHumanBtn.innerText = 'Human vs. Human';
         this.menuDiv.appendChild(humanVsHumanBtn);
+        humanVsHumanBtn.classList.add('menu-button');
         humanVsHumanBtn.addEventListener('click', () => onGameModeSelected('human-vs-human'));
 
         let aiVsHumanBtn = document.createElement('button');
         aiVsHumanBtn.innerText = 'AI vs. Human';
         this.menuDiv.appendChild(aiVsHumanBtn);
+        aiVsHumanBtn.classList.add('menu-button');
         aiVsHumanBtn.addEventListener('click', () => onGameModeSelected('ai-vs-human'));
 
         let aiVsAiBtn = document.createElement('button');
         aiVsAiBtn.innerText = 'AI vs. AI';
         this.menuDiv.appendChild(aiVsAiBtn);
+        aiVsAiBtn.classList.add('menu-button');
         aiVsAiBtn.addEventListener('click', () => onGameModeSelected('ai-vs-ai'));
     }
 
@@ -47,29 +51,32 @@ export class UI {
         this.menuDiv.innerHTML = '';  // Eemaldame olemasoleva sisu
         let markerHeading = document.createElement('h2');
         markerHeading.innerText = 'Select Your Marker';
+        markerHeading.classList.add('menu-heading');
         this.menuDiv.appendChild(markerHeading);
 
         let playAsXBtn = document.createElement('button');
         playAsXBtn.innerText = 'Play as X';
         this.menuDiv.appendChild(playAsXBtn);
+        playAsXBtn.classList.add('menu-button');
         playAsXBtn.addEventListener('click', () => onMarkerSelected('X'));
 
         let playAsOBtn = document.createElement('button');
         playAsOBtn.innerText = 'Play as O';
         this.menuDiv.appendChild(playAsOBtn);
+        playAsOBtn.classList.add('menu-button');
         playAsOBtn.addEventListener('click', () => onMarkerSelected('O'));
     }
 
-    generateGame(handleMove, h1, game, timer, handleDragStart, handleDragOver, handleDrop) {
+    generateGame(handleMove, game, timer, handleDragStart, handleDragOver, handleDrop) {
         this.gameDiv.innerHTML = ''; // Eemaldame olemasoleva mängu
         
         this.gameDiv.style.display = 'block';
-
-        this.gameDiv.appendChild(h1);
+        this.gameDiv.classList.add('game-container');
+        
         let timerContainer = timer.createTimer(game);
         this.gameDiv.appendChild(timerContainer);
         
-        let resetButton = this.resetButton(handleMove, h1, game, timer, handleDragStart, handleDragOver, handleDrop);
+        let resetButton = this.resetButton(handleMove, game, timer, handleDragStart, handleDragOver, handleDrop);
         this.gameDiv.appendChild(resetButton);
 
         let placeNew = this.createRadioButton('placeNew', 'Place New Piece');
@@ -138,7 +145,7 @@ export class UI {
         return board;
     }
     
-    resetButton(handleMove, h1, game, timer, handleDragStart, handleDragOver, handleDrop) {
+    resetButton(handleMove, game, timer, handleDragStart, handleDragOver, handleDrop) {
         let resetButton = document.createElement('button');
         resetButton.innerHTML = 'Reset';
         resetButton.classList.add('reset-button');
@@ -147,7 +154,7 @@ export class UI {
             game.resetGame();
             timer.resetTimer();
             this.clearGame();
-            this.generateGame(handleMove, h1, game, timer, handleDragStart, handleDragOver, handleDrop);
+            this.generateGame(handleMove, game, timer, handleDragStart, handleDragOver, handleDrop);
         });
         
         return resetButton;
@@ -196,6 +203,20 @@ export class UI {
         playerInfoPanel.appendChild(remainingPiecesO);
         
         return playerInfoPanel;
+    }
+
+    drawBoard(handleMove, game, handleDragStart, handleDragOver, handleDrop) {
+        let infoPanel = document.querySelector('.player-info-panel');
+        infoPanel.remove();
+
+        infoPanel = this.createPlayerInfoPanel(game);
+        this.gameDiv.appendChild(infoPanel);
+
+        let board = document.querySelector('.board');
+        board.remove();
+
+        board = this.getInitialBoard(handleMove, game.gridStartX, game.gridStartY, handleDragStart, handleDragOver, handleDrop, game);
+        this.gameDiv.appendChild(board);
     }
     
 }
