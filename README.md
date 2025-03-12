@@ -1,4 +1,4 @@
-Practising Javascript and Typescriptby developing TicTacTwo game
+Practising JavaScript and TypeScript by developing TicTacTwo game
 
 # Local testing - http-server
 
