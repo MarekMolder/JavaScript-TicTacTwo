@@ -1,0 +1,192 @@
+body {
+  background: linear-gradient(135deg, #00bcd4, #26a69a);
+  height: 100%;      /* Seadistab html ja body täis ekraani kõrgusele */
+  margin: 0;         /* Eemaldab vaikimisi marginaalid */
+  overflow: hidden;
+}
+
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #00bcd4, #26a69a);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.menu-heading {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.menu-button {
+  background: white;
+  color: #055fbd;
+  border: none;
+  padding: 12px 24px;
+  margin: 10px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.menu-button:hover {
+  background: #055fbd;
+  color: white;
+  transform: scale(1.05);
+}
+
+.game-container {
+  display: none;
+}
+
+.game-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* Vasakul (game-options), keskel (board), paremal (player-info-panel) */
+  grid-template-rows: auto 1fr auto; /* Ülemine (timer), keskel (board), alumine (reset-button) */
+  height: 100vh;
+  align-items: center;
+  justify-items: center;
+  background: linear-gradient(135deg, #00bcd4, #26a69a);
+  color: black;
+  font-family: Arial, sans-serif;
+  gap: 20px; /* Lisa ruumi elementide vahele */
+}
+
+
+.timer-container {
+  grid-column: 2 / span 1; /* Keskele ülemisse ossa */
+  grid-row: 1 / span 1;
+  background: rgb(195, 238, 253);
+  padding: 10px 150px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.timer-display {
+  padding: 5px 24px;
+  font-size: 2rem;
+}
+
+.timer-button {
+  background: white;
+  color: #055fbd;
+  border: none;
+  padding: 5px 24px;
+  margin: 10px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.timer-button:hover {
+  background: #055fbd;
+  color: white;
+  transform: scale(1.05);
+}
+
+.board {
+  grid-column: 2 / span 1;
+  grid-row: 2 / span 1;
+  display: inline-block;
+  background-color: black;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  background-color: white;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.grid-cell {
+  background-color: rgb(172, 155, 241);
+}
+
+.player-info-panel {
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+  background: rgb(195, 238, 253);
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: left;
+  width: 200px;
+}
+
+.game-options {
+  grid-column: 3 / span 1;
+  grid-row: 2 / span 1;
+  background: rgb(195, 238, 253);
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: left;
+  width: 200px;
+}
+
+.reset-button {
+  grid-column: 2 / span 1; /* Keskele alumisse ossa */
+  grid-row: 3 / span 1;
+  background: white;
+  color: #055fbd;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+  background: #055fbd;
+  color: white;
+  transform: scale(1.05);
+}
+
+.winner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px 40px;
+  border-radius: 10px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Lisame väikese fade-in efekti */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+
+
