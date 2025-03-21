@@ -1,4 +1,5 @@
 Practising Javascript by developing TicTacTwo game
+<<<<<<< HEAD
 
 # Local testing - http-server
 
@@ -17,3 +18,5 @@ Practising Javascript by developing TicTacTwo game
 Now you can visit http://localhost:8080 to view your server
 
 Note: Caching is on by default. Add -c-1 as an option to disable caching.
+=======
+>>>>>>> origin/main
