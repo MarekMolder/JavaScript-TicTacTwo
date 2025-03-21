@@ -1,5 +1,5 @@
-Practising Javascript by developing TicTacTwo game
-<<<<<<< HEAD
+Practising Javascript / Typescrip / vue by developing TicTacTwo game
+
 
 # Local testing - http-server
 
