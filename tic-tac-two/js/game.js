@@ -67,40 +67,75 @@ export class GameBrain {
         this.gameState = 'Stopped'
         this.selectedAction = null;
     }
-    
+
     checkWin() {
-        return this.checkAllLines(this.#board, 3, 3);
+        return this.checkAllLines(this.board, this.gridStartX, this.gridStartY) ?? null;
+    }
+
+    checkAllLines(board, startX, startY) {
+        const width = 3;
+        const height = 3;
+
+        for (let i = 0; i < width; i++) {
+            let winner = this.checkLine(board, startX + i, startY, 0, 1, height);
+            if (winner) return winner;
+
+            winner = this.checkLine(board, startX, startY + i, 1, 0, width);
+            if (winner) return winner;
+        }
+
+        for (let i = 0; i < width; i++) {
+            let diagWinner1 = this.checkLine(board, startX + i, startY, 1, 1, Math.min(width - i, height));
+            if (diagWinner1) return diagWinner1;
+
+            let diagWinner2 = this.checkLine(board, startX + i, startY + height - 1, 1, -1, Math.min(width - i, height));
+            if (diagWinner2) return diagWinner2;
+        }
+
+        for (let j = 0; j < height; j++) {
+            let diagWinner1 = this.checkLine(board, startX, startY + j, 1, 1, Math.min(width, height - j));
+            if (diagWinner1) return diagWinner1;
+
+            let diagWinner2 = this.checkLine(board, startX + width - 1, startY + j, -1, 1, Math.min(width, height - j));
+            if (diagWinner2) return diagWinner2;
+        }
+
+        return null;
+    }
+
+    checkLine(board, startX, startY, deltaX, deltaY, length) {
+        let count = 0;
+        let currentPiece = '';
+
+        for (let i = 0; i < length; i++) {
+            const x = startX + i * deltaX;
+            const y = startY + i * deltaY;
+
+            if (x < 0 || y < 0 || x >= board.length || y >= board[x].length) break;
+
+            const piece = board[x][y];
+            if (piece === currentPiece && piece !== '') {
+                count++;
+            } else {
+                currentPiece = piece;
+                count = piece !== '' ? 1 : 0;
+            }
+
+            if (count >= 3) {
+                return currentPiece;
+            }
+        }
+
+        return null;
     }
 
     checkDraw() {
         for (let i = 0; i < 5; i++) {
             for (let j = 0; j < 5; j++) {
-                if (this.#board[i][j] == null) {
+                if (this.board[i][j] == null) {
                     return false;
                 }
             }
-        }
-        return true;
-    }
-
-    checkAllLines(board, width, height) {
-        for (let i = 0; i < width; i++) {
-            if (this.checkLine(board, this.gridStartX + i, this.gridStartY, 1, 0, height)) return board[this.gridStartX + i][this.gridStartY];
-            if (this.checkLine(board, this.gridStartX, this.gridStartY + i, 0, 1, width)) return board[this.gridStartX][this.gridStartY + i];
-        }
-
-        if (this.checkLine(board, this.gridStartX, this.gridStartY, 1, 1, width)) return board[this.gridStartX][this.gridStartY];
-        if (this.checkLine(board, this.gridStartX + width - 1, this.gridStartY, -1, 1, width)) return board[this.gridStartX + width - 1][this.gridStartY];
-
-        return null;
-    }
-
-    checkLine(board, startX, startY, dx, dy, length) {
-        let first = board[startX][startY];
-        if (first == null) return false;
-
-        for (let i = 1; i < length; i++) {
-            if (board[startX + i * dx]?.[startY + i * dy] !== first) return false;
         }
         return true;
     }

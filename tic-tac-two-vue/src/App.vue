@@ -8,17 +8,13 @@ import PlayerInfoPanel from './components/PlayerInfoPanel.vue';
 
 const game = reactive(new GameBrain());
 const draggedPiece = ref<{ x: number; y: number } | null>(null);
-
 const timer = ref<typeof Timer | null>(null);
-
 const winner = ref<string | null>(null);
 
 const stopGame = (winnerName: string) => {
   game.gameState = 'Stopped';
   winner.value = winnerName;
-  if (timer.value) {
-    timer.value.resetTimer();
-  }
+  timer.value?.resetTimer();
 };
 
 const updateAction = (action: string) => {
@@ -26,56 +22,45 @@ const updateAction = (action: string) => {
 };
 
 const handleCellClick = (x: number, y: number) => {
-  if (game.gameState === 'Stopped' || winner.value === "X" || winner.value === "O") {
-    return;
-  }
-  if (game.selectedAction === 'placeNew') {
-    if ((game.currentPlayer === 'O' && game.remainingPiecesO > 0) ||
-      (game.currentPlayer === 'X' && game.remainingPiecesX > 0)) {
-      game.makeMove(x, y);
-      const winnerName = game.checkWin();
-      if (winnerName) {
-        stopGame(winnerName);
-      }
-    }
+  if (game.gameState === 'Stopped' || winner.value) return;
+
+  if (game.selectedAction === 'placeNew' && (
+    (game.currentPlayer === 'O' && game.remainingPiecesO > 0) ||
+    (game.currentPlayer === 'X' && game.remainingPiecesX > 0)
+  )) {
+    game.makeMove(x, y);
+    checkWin();
   } else if (game.selectedAction === 'moveGrid') {
     game.moveGrid(x, y);
+    checkWin();
   }
 };
 
 const handleDrop = (event: DragEvent, x: number, y: number) => {
-  if (game.gameState === 'Stopped' || winner.value === "X" || winner.value === "O") {
-    return;
-  }
+  if (game.gameState === 'Stopped' || winner.value) return;
+  if (game.selectedAction !== 'moveExisting' || !draggedPiece.value) return;
 
-  if (game.selectedAction !== 'moveExisting') return;
-
-  if (draggedPiece.value) {
-    game.moveExistingPiece(draggedPiece.value.x, draggedPiece.value.y, x, y);
-    draggedPiece.value = null;
-    const winnerName = game.checkWin();
-    if (winnerName) {
-      stopGame(winnerName);
-    }
-  }
+  game.moveExistingPiece(draggedPiece.value.x, draggedPiece.value.y, x, y);
+  draggedPiece.value = null;
+  checkWin();
 };
 
 const resetGame = () => {
   game.resetGame();
   winner.value = null;
-
-  if (timer.value) {
-    timer.value.resetTimer();
-  }
+  timer.value?.resetTimer();
 };
 
+const checkWin = () => {
+  const winnerName = game.checkWin();
+  if (winnerName) stopGame(winnerName);
+};
 </script>
 
 <template>
   <div class="game-container">
     <GameOptions @update-action="updateAction" />
     <PlayerInfoPanel :game="game" />
-
     <GameBoard
       :board="game.board"
       :gridStartX="game.gridStartX"
@@ -85,13 +70,10 @@ const resetGame = () => {
       @drag-over="(event, x, y) => event.preventDefault()"
       @drop="handleDrop"
     />
-
     <Timer ref="timer" :game="game" />
-
     <div v-if="winner" class="winner-display">
       <h2>{{ winner }} wins!</h2>
     </div>
-
     <button @click="resetGame" class="reset-button">Reset Game</button>
   </div>
 </template>
@@ -120,14 +102,8 @@ const resetGame = () => {
 }
 
 @keyframes winnerAnimation {
-  0% {
-    transform: scale(1);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
+  0% { transform: scale(1); opacity: 0; }
+  100% { transform: scale(1.2); opacity: 1; }
 }
 
 button {
@@ -175,14 +151,7 @@ button:active {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
 }
-
 </style>

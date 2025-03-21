@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import {type PropType, ref, watch} from 'vue';
+import { type PropType, ref, watch, defineExpose } from 'vue';
 import { GameBrain } from '../bll/gamebrain';
 
 const props = defineProps({
@@ -20,18 +20,16 @@ const toggleTimer = () => {
     props.game.gameState = 'Stopped';
   } else {
     props.game.gameState = 'Playing';
-    timerInterval = setInterval(() => {
-      elapsedTime.value++;
-    }, 1000);
+    timerInterval = setInterval(() => elapsedTime.value++, 1000);
     timerRunning.value = true;
   }
 };
 
 const resetTimer = () => {
   clearInterval(timerInterval!);
-  timerInterval = null;
   elapsedTime.value = 0;
   timerRunning.value = false;
+  timerInterval = null;
 };
 
 watch(() => props.game.gameState, (newState) => {
@@ -41,9 +39,7 @@ watch(() => props.game.gameState, (newState) => {
   }
 });
 
-defineExpose({
-  resetTimer,
-});
+defineExpose({ resetTimer });
 </script>
 
 <template>
@@ -93,11 +89,7 @@ defineExpose({
 }
 
 @keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 </style>

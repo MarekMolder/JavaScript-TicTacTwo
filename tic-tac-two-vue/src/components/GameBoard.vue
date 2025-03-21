@@ -7,27 +7,28 @@ interface Props {
 
 const props = defineProps<Props>();
 defineEmits(['cellClick', 'dragStart', 'dragOver', 'drop']);
+
+const isGridCell = (rowIndex: number, colIndex: number) =>
+  rowIndex >= props.gridStartX && rowIndex < props.gridStartX + 3 &&
+  colIndex >= props.gridStartY && colIndex < props.gridStartY + 3;
 </script>
 
 <template>
   <table class="board">
     <tbody>
-    <tr v-for="(row, indexRow) in props.board" :key="indexRow">
+    <tr v-for="(row, rowIndex) in props.board" :key="rowIndex">
       <td
-        v-for="(cel, indexCol) in row"
-        :key="indexCol"
+        v-for="(cell, colIndex) in row"
+        :key="colIndex"
         class="cell"
-        :class="{
-            'grid-cell': indexRow >= props.gridStartX && indexRow < props.gridStartX + 3 &&
-                        indexCol >= props.gridStartY && indexCol < props.gridStartY + 3
-          }"
-        @click="$emit('cellClick', indexRow, indexCol)"
-        @dragstart="$emit('dragStart', $event, indexRow, indexCol)"
-        @dragover.prevent="$emit('dragOver', $event, indexRow, indexCol)"
-        @drop="$emit('drop', $event, indexRow, indexCol)"
+        :class="{ 'grid-cell': isGridCell(rowIndex, colIndex) }"
+        @click="$emit('cellClick', rowIndex, colIndex)"
+        @dragstart="$emit('dragStart', $event, rowIndex, colIndex)"
+        @dragover.prevent="$emit('dragOver', $event, rowIndex, colIndex)"
+        @drop="$emit('drop', $event, rowIndex, colIndex)"
         draggable="true"
       >
-        <span v-html="cel === '' ? '&nbsp;' : cel"></span>
+        <span v-html="cell || '&nbsp;'"></span>
       </td>
     </tr>
     </tbody>
@@ -55,6 +56,7 @@ defineEmits(['cellClick', 'dragStart', 'dragOver', 'drop']);
   cursor: pointer;
   vertical-align: middle;
   color: black;
+  transition: transform 0.1s ease-in-out;
 }
 
 .cell:hover {

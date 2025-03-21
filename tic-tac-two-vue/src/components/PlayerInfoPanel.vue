@@ -29,6 +29,7 @@ const remainingPiecesO = computed(() => `Remaining Pieces O: ${props.game.remain
   width: 220px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.5s ease-out;
+  transition: transform 0.2s ease-in-out;
 }
 
 .current-player {
@@ -38,16 +39,18 @@ const remainingPiecesO = computed(() => `Remaining Pieces O: ${props.game.remain
   margin-bottom: 12px;
 }
 
-.remaining-pieces-x {
-  color: #0277bd;
+.remaining-pieces-x,
+.remaining-pieces-o {
   font-size: 1.2rem;
   margin-bottom: 10px;
 }
 
+.remaining-pieces-x {
+  color: #0277bd;
+}
+
 .remaining-pieces-o {
   color: #d32f2f;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
 }
 
 @keyframes fadeIn {
@@ -61,6 +64,5 @@ const remainingPiecesO = computed(() => `Remaining Pieces O: ${props.game.remain
 
 .player-info-panel:hover {
   transform: scale(1.05);
-  transition: transform 0.2s ease-in-out;
 }
 </style>
